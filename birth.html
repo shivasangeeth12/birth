@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronos | Temporal Existence Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-field {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: #818cf8;
+            box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
+            outline: none;
+        }
+
+        /* Animated Background Gradient */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: float 20s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, -20px); }
+        }
+
+        /* Card Hover Effects */
+        .stat-card {
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(129, 140, 248, 0.4);
+        }
+
+        /* Input Date Icon Fix */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative">
+
+    <!-- Dynamic Background Elements -->
+    <div class="bg-orb w-96 h-96 bg-indigo-600 top-0 left-0 mix-blend-screen animate-pulse"></div>
+    <div class="bg-orb w-[500px] h-[500px] bg-purple-600 bottom-0 right-0 mix-blend-screen animation-delay-2000"></div>
+    <div class="bg-orb w-64 h-64 bg-cyan-600 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mix-blend-overlay opacity-20"></div>
+
+    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 z-10">
+        
+        <!-- Left Column: Controls -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+            <div class="glass-panel rounded-3xl p-8 h-full flex flex-col justify-center relative overflow-hidden">
+                <!-- Decorative grid -->
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-30"></div>
+                
+                <div class="relative z-10">
+                    <div class="mb-8">
+                        <span class="text-indigo-400 text-xs font-bold tracking-[0.2em] uppercase mb-2 block">Temporal Analysis</span>
+                        <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-100 to-slate-400 leading-tight">
+                            Life<br>Metrics
+                        </h1>
+                        <p class="text-slate-400 mt-4 text-sm leading-relaxed">
+                            Enter your date of birth to visualize your journey through time. Calculate exact age, milestones, and cosmic statistics.
+                        </p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Date of Birth</label>
+                            <input type="date" id="dob-input" class="input-field w-full rounded-xl px-4 py-4 text-lg font-mono">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Current Time (Optional)</label>
+                            <input type="datetime-local" id="target-input" class="input-field w-full rounded-xl px-4 py-4 text-lg font-mono">
+                            <p class="text-xs text-slate-500 ml-1">Defaults to current moment</p>
+                        </div>
+
+                        <button id="calculate-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-indigo-900/50 flex items-center justify-center gap-2 group">
+                            <span>INITIATE CALCULATION</span>
+                            <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Results Dashboard -->
+        <section class="lg:col-span-7 flex flex-col gap-6 opacity-0 transition-opacity duration-700" id="results-area">
+            
+            <!-- Top Row: Main Age Display -->
+            <div class="glass-panel rounded-3xl p-8 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-white"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                
+                <h3 class="text-slate-400 text-sm font-bold uppercase tracking-widest mb-6">Precise Chronological Age</h3>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                        <div id="res-years" class="text-3xl md:text-4xl font-bold text-white mb-1">0</div>
+                        <div class="text-xs text-indigo-300 uppercase tracking-wider">Years</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                        <div id="res-months" class="text-3xl md:text-4xl font-bold text-white mb-1">0</div>
+                        <div class="text-xs text-indigo-300 uppercase tracking-wider">Months</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                        <div id="res-days" class="text-3xl md:text-4xl font-bold text-white mb-1">0</div>
+                        <div class="text-xs text-indigo-300 uppercase tracking-wider">Days</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                        <div id="res-time" class="text-xl md:text-2xl font-mono font-bold text-emerald-400 mb-1 pt-2">00:00</div>
+                        <div class="text-xs text-emerald-300/70 uppercase tracking-wider">Time</div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-white/10 flex justify-between items-end">
+                    <div>
+                        <div class="text-xs text-slate-500 uppercase">Total Days Lived</div>
+                        <div id="res-total-days" class="text-2xl font-mono text-white">0</div>
+                    </div>
+                    <div class="text-right">
+                         <div class="text-xs text-slate-500 uppercase">Next Birthday In</div>
+                        <div id="res-next-bday" class="text-xl font-bold text-pink-400">0 Days</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Row: Fun Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Zodiac -->
+                <div class="stat-card glass-panel rounded-3xl p-6 flex items-center gap-4 border border-white/5">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-2xl shadow-lg shadow-purple-900/50">
+                        <span id="zodiac-icon">♈</span>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">Zodiac Sign</div>
+                        <div id="zodiac-name" class="text-xl font-bold text-white">Aries</div>
+                        <div id="zodiac-date" class="text-xs text-slate-500">Mar 21 - Apr 19</div>
+                    </div>
+                </div>
+
+                <!-- Season -->
+                <div class="stat-card glass-panel rounded-3xl p-6 flex items-center gap-4 border border-white/5">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-2xl shadow-lg shadow-orange-900/50">
+                        <i class="fas fa-sun text-white"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">Birth Season</div>
+                        <div id="season-name" class="text-xl font-bold text-white">Spring</div>
+                        <div id="season-desc" class="text-xs text-slate-500">A time of renewal</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Row: Life Progress & Milestones -->
+            <div class="glass-panel rounded-3xl p-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider">Life Progress (Est. 80 Years)</h3>
+                    <span id="life-percent" class="text-indigo-400 font-mono font-bold">0%</span>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden mb-8 relative">
+                    <div id="life-bar" class="h-full bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500 w-0 transition-all duration-1000 ease-out relative">
+                        <div class="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="p-3 rounded-xl bg-white/5">
+                        <div class="text-xs text-slate-500 mb-1">Heartbeats</div>
+                        <div id="stat-heartbeats" class="text-lg font-mono text-white font-bold">0</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white/5">
+                        <div class="text-xs text-slate-500 mb-1">Breaths Taken</div>
+                        <div id="stat-breaths" class="text-lg font-mono text-white font-bold">0</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white/5">
+                        <div class="text-xs text-slate-500 mb-1">Earth Orbits</div>
+                        <div id="stat-orbits" class="text-lg font-mono text-white font-bold">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        // --- Elements ---
+        const dobInput = document.getElementById('dob-input');
+        const targetInput = document.getElementById('target-input');
+        const calcBtn = document.getElementById('calculate-btn');
+        const resultsArea = document.getElementById('results-area');
+
+        // Result Elements
+        const elYears = document.getElementById('res-years');
+        const elMonths = document.getElementById('res-months');
+        const elDays = document.getElementById('res-days');
+        const elTime = document.getElementById('res-time');
+        const elTotalDays = document.getElementById('res-total-days');
+        const elNextBday = document.getElementById('res-next-bday');
+        const elZodiacIcon = document.getElementById('zodiac-icon');
+        const elZodiacName = document.getElementById('zodiac-name');
+        const elZodiacDate = document.getElementById('zodiac-date');
+        const elSeasonName = document.getElementById('season-name');
+        const elSeasonDesc = document.getElementById('season-desc');
+        const elLifePercent = document.getElementById('life-percent');
+        const elLifeBar = document.getElementById('life-bar');
+        const elHeartbeats = document.getElementById('stat-heartbeats');
+        const elBreaths = document.getElementById('stat-breaths');
+        const elOrbits = document.getElementById('stat-orbits');
+
+        // --- Logic ---
+
+        // Zodiac Data
+        const zodiacSigns = [
+            { name: "Capricorn", icon: "♑", start: [12, 22], end: [1, 19] },
+            { name: "Aquarius", icon: "♒", start: [1, 20], end: [2, 18] },
+            { name: "Pisces", icon: "♓", start: [2, 19], end: [3, 20] },
+            { name: "Aries", icon: "♈", start: [3, 21], end: [4, 19] },
+            { name: "Taurus", icon: "♉", start: [4, 20], end: [5, 20] },
+            { name: "Gemini", icon: "♊", start: [5, 21], end: [6, 20] },
+            { name: "Cancer", icon: "♋", start: [6, 21], end: [7, 22] },
+            { name: "Leo", icon: "♌", start: [7, 23], end: [8, 22] },
+            { name: "Virgo", icon: "♍", start: [8, 23], end: [9, 22] },
+            { name: "Libra", icon: "♎", start: [9, 23], end: [10, 22] },
+            { name: "Scorpio", icon: "♏", start: [10, 23], end: [11, 21] },
+            { name: "Sagittarius", icon: "♐", start: [11, 22], end: [12, 21] }
+        ];
+
+        function getZodiac(day, month) {
+            // month is 0-indexed in JS Date, but our data is 1-indexed
+            const m = month + 1; 
+            const d = day;
+            
+            // Special case for Capricorn (spans year end)
+            if ((m === 12 && d >= 22) || (m === 1 && d <= 19)) return zodiacSigns[0];
+            
+            for (let i = 1; i < zodiacSigns.length; i++) {
+                const sign = zodiacSigns[i];
+                if ((m === sign.start[0] && d >= sign.start[1]) || (m === sign.end[0] && d <= sign.end[1])) {
+                    return sign;
+                }
+            }
+            return zodiacSigns[0]; // Default fallback
+        }
+
+        function getSeason(month) {
+            const seasons = [
+                { name: "Winter", desc: "Cold days, warm hearts" }, // Dec, Jan, Feb
+                { name: "Spring", desc: "Time of renewal" },       // Mar, Apr, May
+                { name: "Summer", desc: "Endless days & sunshine" }, // Jun, Jul, Aug
+                { name: "Autumn", desc: "Harvest & change" }       // Sep, Oct, Nov
+            ];
+            if (month === 11 || month === 0 || month === 1) return seasons[0];
+            if (month === 2 || month === 3 || month === 4) return seasons[1];
+            if (month === 5 || month === 6 || month === 7) return seasons[2];
+            return seasons[3];
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function calculate() {
+            const dobVal = dobInput.value;
+            if (!dobVal) {
+                alert("Please enter your date of birth.");
+                return;
+            }
+
+            const dob = new Date(dobVal);
+            const now = targetInput.value ? new Date(targetInput.value) : new Date();
+
+            if (dob > now) {
+                alert("Date of birth cannot be in the future!");
+                return;
+            }
+
+            // Show results area
+            resultsArea.classList.remove('opacity-0');
+
+            // 1. Basic Difference
+            let years = now.getFullYear() - dob.getFullYear();
+            let months = now.getMonth() - dob.getMonth();
+            let days = now.getDate() - dob.getDate();
+            let hours = now.getHours() - dob.getHours();
+            let minutes = now.getMinutes() - dob.getMinutes();
+
+            // Adjust negatives
+            if (minutes < 0) { hours--; minutes += 60; }
+            if (hours < 0) { days--; hours += 24; }
+            
+            // Handle days rollover
+            if (days < 0) {
+                months--;
+                // Get days in previous month
+                const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+            
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // 2. Total Days
+            const diffTime = Math.abs(now - dob);
+            const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            // 3. Next Birthday
+            const currentYear = now.getFullYear();
+            let nextBday = new Date(dob);
+            nextBday.setFullYear(currentYear);
+            if (nextBday < now) {
+                nextBday.setFullYear(currentYear + 1);
+            }
+            const daysUntilBday = Math.ceil((nextBday - now) / (1000 * 60 * 60 * 24));
+
+            // 4. Zodiac & Season
+            const sign = getZodiac(dob.getDate(), dob.getMonth());
+            const season = getSeason(dob.getMonth());
+
+            // 5. Life Stats (Estimates)
+            // Avg Heartbeat: 80 bpm
+            // Avg Breaths: 16 per minute
+            const minutesLived = totalDays * 24 * 60;
+            const heartbeats = minutesLived * 80;
+            const breaths = minutesLived * 16;
+            const orbits = (totalDays / 365.25).toFixed(2);
+
+            // 6. Life Progress (Assuming 80 years)
+            const lifeExpectancy = 80;
+            const lifeProgress = Math.min(100, ((years + months/12) / lifeExpectancy) * 100).toFixed(1);
+
+            // --- Update DOM ---
+            
+            // Animate Numbers
+            animateValue(elYears, parseInt(elYears.innerText), years, 1000);
+            animateValue(elMonths, parseInt(elMonths.innerText), months, 1000);
+            animateValue(elDays, parseInt(elDays.innerText), days, 1000);
+            
+            elTime.innerText = `${String(hours).padStart(2,'0')}h ${String(minutes).padStart(2,'0')}m`;
+            
+            elTotalDays.innerText = formatNumber(totalDays);
+            elNextBday.innerText = `${daysUntilBday} Days`;
+            
+            // Zodiac
+            elZodiacIcon.innerText = sign.icon;
+            elZodiacName.innerText = sign.name;
+            elZodiacDate.innerText = `${sign.start[0]}/${sign.start[1]} - ${sign.end[0]}/${sign.end[1]}`;
+
+            // Season
+            elSeasonName.innerText = season.name;
+            elSeasonDesc.innerText = season.desc;
+
+            // Stats
+            elHeartbeats.innerText = formatNumber(heartbeats);
+            elBreaths.innerText = formatNumber(breaths);
+            elOrbits.innerText = orbits;
+
+            // Progress Bar
+            setTimeout(() => {
+                elLifeBar.style.width = `${lifeProgress}%`;
+                elLifePercent.innerText = `${lifeProgress}%`;
+                
+                // Color shift based on age
+                if(lifeProgress > 75) {
+                    elLifeBar.classList.remove('from-indigo-600', 'via-purple-500', 'to-pink-500');
+                    elLifeBar.classList.add('from-emerald-500', 'to-teal-400');
+                }
+            }, 100);
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        calcBtn.addEventListener('click', calculate);
+
+        // Set default target date to now
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        targetInput.value = now.toISOString().slice(0,16);
+
+    </script>
+</body>
+</html>
